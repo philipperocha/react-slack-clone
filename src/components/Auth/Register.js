@@ -14,7 +14,7 @@ class Register extends Component {
 		errors: [],
 		loading: false,
 		usersRef: firebase.database().ref('users')
-	}
+	};
 
 	isFormValid = () => {
 		let errors = [];
@@ -31,11 +31,11 @@ class Register extends Component {
 		} else {
 			return true;
 		}
-	}
+	};
 
 	isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
 		return !username.length || !email.length || !password.length || !passwordConfirmation.length;
-	}
+	};
 
 	isPasswordValid = ({ password, passwordConfirmation }) => {
 		if (password.length < 6 || passwordConfirmation < 6) {
@@ -45,13 +45,13 @@ class Register extends Component {
 		} else {
 			return true;
 		}
-	}
+	};
 
 	displayErrors = errors => errors.map((error, i) => <p key={i}>{error.message}</p>);
 
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
-	}
+	};
 
 	handleSubmit = event => {
 		const { email, password, username } = this.state;
@@ -85,28 +85,28 @@ class Register extends Component {
 					this.setState({ errors: this.state.errors.concat(err), loading: false });
 				});
 		}
-	}
+	};
 
 	saveUser = createdUser => {
 		return this.state.usersRef.child(createdUser.user.uid).set({
 			name: createdUser.user.displayName,
 			avatar: createdUser.user.photoURL
 		});
-	}
+	};
 
 	handleInputError = (errors, inputName) => {
 		return (
 			errors.some(error => 
 				error.message.toLowerCase().includes(inputName)) ? 'error' : ''
 		);
-	}
+	};
 	
 	render() {
 		const { username, email, password, passwordConfirmation, errors, loading } = this.state;
 		return (
 			<Grid textAlign='center' verticalAlign='middle' className='app'>
 				<Grid.Column style={{ maxWidth: 450 }}>
-					<Header as='h2' icon color='orange' textAlign='center'>
+					<Header as='h1' icon color='orange' textAlign='center'>
 						<Icon name='puzzle piece' color='orange' />
 						Register for DevChat
 					</Header>
@@ -172,11 +172,11 @@ class Register extends Component {
 							{this.displayErrors(errors)}
 						</Message>
 					)}
-					<Message>Already a user? <Link to='./login'>login</Link></Message>
+					<Message>Already a user? <Link to='./login'>Login</Link></Message>
 				</Grid.Column>
 			</Grid>
 		)
-	}
+	};
 }
 
 export default Register;
