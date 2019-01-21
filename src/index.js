@@ -6,7 +6,7 @@ import Register from './components/Auth/Register';
 import Spinner from './Spinner';
 import registerServiceWorker from './registerServiceWorker';
 import firebase from './firebase';
-import { setUser } from './actions';
+import { setUser, clearUser } from './actions';
 
 import 'semantic-ui-css/semantic.min.css';
 
@@ -28,6 +28,9 @@ class Root extends Component {
 				if (user) {
 					this.props.setUser(user);
 					this.props.history.push('/');
+				} else {
+					this.props.history.push('/login');
+					this.props.clearUser();
 				}
 			})
 	}
@@ -52,7 +55,7 @@ const mapStateFromProps = state => ({
 const RootWithAuth = withRouter(
 	connect(
 		mapStateFromProps, 
-		{ setUser }
+		{ setUser, clearUser }
 	)(Root)
 );
 
