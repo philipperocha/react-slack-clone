@@ -12,7 +12,7 @@ body,
 	overflow-y: scroll;
 }
 
-/* Messages.js */
+/* MessageForm.js */
 .message__form {
 	position: fixed !important;
 	bottom: 1em;
@@ -20,4 +20,10 @@ body,
 	left: 0;
 	right: 1em;
 	z-index: 200;
+}
+
+/* Message.js */
+.message__self {
+	border-left: 2px solid orange;
+	padding-left: 8px;
 }
