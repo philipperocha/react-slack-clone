@@ -13,7 +13,8 @@ class Messages extends Component {
 		messagesRef: firebase.database().ref('messages'),
 		channel: this.props.currentChannel,
 		user: this.props.currentUser,
-		progressBar: false
+		progressBar: false,
+		numUniqueUsers: ''
 	};
 
 	componentDidMount() {
@@ -36,8 +37,21 @@ class Messages extends Component {
 				messages: loadedMessages,
 				messagesLoading: false
 			});
+			this.countUniqueUsers(loadedMessages);
 		});
 	};
+
+	countUniqueUsers = messages => {
+		const uniqueUsers = messages.reduce((acc, message) => {
+			if (!acc.includes(message.user.name)) {
+				acc.push(message.user.name);
+			}
+			return acc;
+		}, []);
+		const plural = uniqueUsers.length > 1 || uniqueUsers === 0;
+		const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
+		this.setState({ numUniqueUsers });
+	}
 
 	displayMessages = messages => (
 		messages.length > 0 && messages.map(message => (
@@ -55,12 +69,17 @@ class Messages extends Component {
 		}
 	}
 
+	displayChannelName = channel => channel ? `#${channel.name}` : '';
+
 	render() {
-		const { messagesRef, messages, channel, user, progressBar } = this.state;
+		const { messagesRef, messages, channel, user, progressBar, numUniqueUsers } = this.state;
 
 		return (
 			<React.Fragment>
-				<MessagesHeader />
+				<MessagesHeader
+					channelName={this.displayChannelName(channel)}
+					numUniqueUsers={numUniqueUsers}
+				/>
 				<Segment>
 					<Comment.Group className={progressBar ? 'messages__progress' : 'messages'}>
 						{this.displayMessages(messages)}
