@@ -139,8 +139,6 @@ class MessageForm extends Component {
 	render() {
 		const { errors, message, loading, modal, uploadState, percentUploaded } = this.state;
 
-		console.log(this.state.channel);
-
 		return (
 			<Segment className='message__form'>
 				{/* Channel Title */}
