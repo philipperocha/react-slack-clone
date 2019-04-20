@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Segment, Comment } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { setUserPosts } from '../../actions';
 import firebase from '../../firebase';
 
 import MessagesHeader from './MessagesHeader';
@@ -49,7 +51,7 @@ class Messages extends Component {
                     this.setState({ isChannelStarred: prevStarred });
                 }
             });
-    }
+    };
 
 	addMessageListener = channelId => {
 		const loadedMessages = [];
@@ -61,20 +63,21 @@ class Messages extends Component {
 				messages: loadedMessages,
 				messagesLoading: false
 			});
-			this.countUniqueUsers(loadedMessages);
+            this.countUniqueUsers(loadedMessages);
+            this.countUserPosts(loadedMessages);
 		});
 	};
 
 	getMessagesRef = () => {
 		const { messagesRef, privateMessagesRef, privateChannel } = this.state;
 		return privateChannel ? privateMessagesRef : messagesRef;
-    }
+    };
     
     handleStar = () => {
         this.setState(prevState => ({
             isChannelStarred: !prevState.isChannelStarred
         }), () => this.starChannel());
-    }
+    };
 
     starChannel = () => {
         if (this.state.isChannelStarred) {
@@ -100,14 +103,14 @@ class Messages extends Component {
                     }
                 });
         }
-    }
+    };
 
 	handleSearchChange = event => {
 		this.setState({
 			searchTerm: event.target.value,
 			searchLoading: true
 		}, () => this.handleSearchMessages());
-	}
+	};
 
 	handleSearchMessages = () => {
 		const channelMesages = [...this.state.messages];
@@ -120,7 +123,7 @@ class Messages extends Component {
 		}, []);
 		this.setState({ searchResults });
 		setTimeout(() => this.setState({ searchLoading: false }), 1000);
-	}
+	};
 
 	countUniqueUsers = messages => {
 		const uniqueUsers = messages.reduce((acc, message) => {
@@ -132,7 +135,22 @@ class Messages extends Component {
 		const plural = uniqueUsers.length > 1 || uniqueUsers === 0;
 		const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
 		this.setState({ numUniqueUsers });
-	}
+    };
+    
+    countUserPosts = messages => {
+        let userPosts = messages.reduce((acc, message) => {
+            if (message.user.name in acc) {
+                acc[message.user.name].count += 1;
+            } else {
+                acc[message.user.name] = {
+                    avatar: message.user.avatar,
+                    count: 1
+                }
+            }
+            return acc;
+        }, {});
+        this.props.setUserPosts(userPosts);
+    };
 
 	displayMessages = messages => (
 		messages.length > 0 && messages.map(message => (
@@ -201,4 +219,4 @@ class Messages extends Component {
 	};
 }
 
-export default Messages;
+export default connect(null, { setUserPosts })(Messages);
